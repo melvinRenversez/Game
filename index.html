@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+</head>
+<body>
+   <canvas>
+
+   </canvas>
+</body>
+<script>
+   const canvas = document.querySelector('canvas');
+   const ctx = canvas.getContext('2d');
+
+   canvas.width = window.innerWidth;
+   canvas.height = window.innerHeight;
+
+   board = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+   ];
+
+   function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let row = 0; row < board.length; row++) {
+         for (let col = 0; col < board[row].length; col++) {
+            if (row == (board.length -1)/2 && col == (board[row].length -1)/2){
+               ctx.fillStyle = 'black';
+            }else if ((row+col) % 2 === 0)  {
+               ctx.fillStyle = 'lightgray';
+            }else {
+               ctx.fillStyle = 'darkgray';
+            }
+
+            ctx.fillRect(col * 50, row * 50, 50, 50);
+         }
+      }
+
+      requestAnimationFrame(gameLoop);
+   }
+   gameLoop();
+   
+
+</script>
+</html>
