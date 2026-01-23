@@ -63,12 +63,32 @@ class Main {
 
     clickOn(position) {
         let cells = this.getAllCells();
+
+        cells.forEach(cell => {
+            console.log("cell select:", cell.isSelected);
+        });
+
+        console.log("cells :", cells);
+
+        // let cellSelected = cells.find(cell => cell.cellContentIsSelected());
+        let cellSelected;
+
+        for (let cell of cells) {
+            console.log("cell for select" ,cell.cellContentIsSelected());
+            console.log("for cell:", cell);
+            if (cell.cellContentIsSelected()) {
+                cellSelected = cell;
+                break;
+            }
+        }
+
+        console.log("cellSelected :", cellSelected);
+
         cells.forEach(cell => {
             if (cell.position.x === position.x && cell.position.y === position.y) {
                 cell.clickOnCell(this.board);
             }
         });
-        this.drawBoard();
     }
 
 
@@ -83,7 +103,6 @@ class Main {
             const row = Math.floor(y / this.cellSize);
     
             console.log(`Clicked on row: ${row}, col: ${col}`);
-    
             this.clickOn({ x: col, y: row });
         });
     }

@@ -40,8 +40,19 @@ class Cell {
 
     clickOnCell(board) {
         if (!this.centent) {return}
-        this.centent.select(this.position, board);
-        this.centent.setPossibleMovements(board, this.position);
-        this.centent.drawPossibleMovements(this.ctx, this.size);
+        console.log("test function isSelected:", this.centent.isSelected());
+        if (!this.centent.isSelected()){
+            console.log("selecting cell:", this.name);
+            this.centent.select();
+            this.centent.setPossibleMovements(board, this.position);
+            this.centent.drawPossibleMovements(this.ctx, this.size);
+        } else {
+            
+        }
+    }
+
+    cellContentIsSelected() {
+        if (!this.content) {return false}
+        return this.content.isSelected();
     }
 }

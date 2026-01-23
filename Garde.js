@@ -5,14 +5,14 @@ class Garde {
 
     constructor() {
         this.posibleMovement = [
-            [2, 0, 2, 0, 0],
+            [0, 0, 2, 0, 0],
             [0, 2, 0, 2, 0],
             [2, 0, 1, 0, 2],
             [0, 2, 0, 2, 0],
             [0, 0, 2, 0, 0]
         ];
         this.posibleMovementPositionsInBoard = [];
-        this.isSelected = false;
+        this.selected = false;
         this.color = 'blue';
     }
 
@@ -24,7 +24,12 @@ class Garde {
     }
 
     select() {
-            this.isSelected = !this.isSelected;
+        console.log("selecting garde");
+            this.selected = !this.selected;
+            console.log("Garde selected state:", this.selected);
+    }
+    isSelected() {
+        return this.selected;
     }
 
     setPossibleMovements(board, position) {
@@ -52,24 +57,24 @@ class Garde {
 
     drawPossibleMovements(ctx, cellSize) {
         console.log(this.posibleMovementPositionsInBoard);
-        console.log(this.isSelected);
-        if (!this.isSelected) return;
-        ctx.fillStyle = 'rgba(0, 255, 0, 1)';
-
+        console.log(this.selected);
+        if (!this.selected) return;
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+        
         this.posibleMovementPositionsInBoard.forEach(pos => {
-            console.log(pos);
             ctx.fillRect(pos.x * cellSize, pos.y * cellSize, cellSize, cellSize);
         });
     }
 
+
     tryToMoveTo(position) {
-        if (!this.isSelected) return false;
+        if (!this.selected) return false;
         const canMove = this.posibleMovementPositionsInBoard.some(pos => pos.x === position.x && pos.y === position.y);
 
         if (canMove) {
             this.position = position;
             this.posibleMovementPositionsInBoard = [];
-            this.isSelected = false;
+            this.selected = false;
             return true;
         }
 
