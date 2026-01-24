@@ -1,7 +1,7 @@
 class Main {
     constructor(canvas) {
         this.board = [];
-        this.boardSize = { rows: 9, cols: 9 };
+        this.boardSize = { rows: 11, cols: 11 };
 
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
@@ -45,7 +45,7 @@ class Main {
         let cells = this.getAllCells();
         cells.forEach(cell => {
             // Draw cell background
-            cell.draw();
+            cell.draw({ x: Math.floor(this.boardSize.cols / 2), y: Math.floor(this.boardSize.rows / 2)});
         });
     }
 
@@ -53,7 +53,7 @@ class Main {
 
         let cells = this.getAllCells();
         cells.forEach(cell => {
-            if (cell.name == "F6") {
+            if (cell.name == "F8" || cell.name == "D6" || cell.name == "F4" || cell.name == "D4") {
                 cell.setNewContent(new Garde());
             }
         });
@@ -63,32 +63,46 @@ class Main {
 
     clickOn(position) {
         let cells = this.getAllCells();
-
-        cells.forEach(cell => {
-            console.log("cell select:", cell.isSelected);
-        });
-
-        console.log("cells :", cells);
-
-        // let cellSelected = cells.find(cell => cell.cellContentIsSelected());
-        let cellSelected;
-
+        // Parcourir tt les cells
         for (let cell of cells) {
-            console.log("cell for select" ,cell.cellContentIsSelected());
-            console.log("for cell:", cell);
+            // verifier que le contenue dans la cell est selectionner
             if (cell.cellContentIsSelected()) {
-                cellSelected = cell;
-                break;
+                // recupere les movement possible et verifie si le click corespond avec un movement possible
+                let possibleMove = cell.content.posibleMovementPositionsInBoard;
+                let canMove = possibleMove.find(pos => pos.x === position.x && pos.y === position.y);
+                // console.log("canMove:", canMove);
+                // verifier si le movement est possible 
+                if (canMove) {
+                    // pacourir tt les cells pour trouver la cell cible
+                    for (let targetCell of cells) {
+                        // verifier si la cell cible est la cell cible
+                        if (targetCell.position.x === position.x && targetCell.position.y === position.y) {
+                            // sauvegar la piece a deplacer
+                            let moveContent = cell.content;
+                            // reset les donne de la place 
+                            moveContent.resetData();
+                            targetCell.setNewContent(moveContent);
+                            cell.content = null;
+                        }
+                    }
+                    // redraw board
+                    this.drawBoard();
+                    break;
+                } else {
+                    // si il peut pas bouger on deselctionne la piece
+                    console.log("deselecting piece");
+                    cell.content.select();
+                    this.drawBoard();
+                }
+            } else {
+                cells.forEach(cell => {
+                    if (cell.position.x === position.x && cell.position.y === position.y) {
+                        cell.clickOnCell(this.board);
+                    }
+                });
             }
         }
 
-        console.log("cellSelected :", cellSelected);
-
-        cells.forEach(cell => {
-            if (cell.position.x === position.x && cell.position.y === position.y) {
-                cell.clickOnCell(this.board);
-            }
-        });
     }
 
 
@@ -98,10 +112,10 @@ class Main {
             const rect = canvas.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
-    
+
             const col = Math.floor(x / this.cellSize);
             const row = Math.floor(y / this.cellSize);
-    
+
             console.log(`Clicked on row: ${row}, col: ${col}`);
             this.clickOn({ x: col, y: row });
         });

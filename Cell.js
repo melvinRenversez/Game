@@ -5,54 +5,65 @@ class Cell {
         this.position = position;
         this.size = cellSize;
 
-        this.centent = null;
+        this.content = null;
         console.log(this.size)
     }
 
     setNewContent(content) {
-        this.centent = content;
+        this.content = content;
     }
 
-    draw() {
+    draw(midPosition) {
 
-        if (this.centent) {
-            this.centent.draw(this.position, this.ctx, this.size);
+        if (this.content) {
+            this.content.draw(this.position, this.ctx, this.size);
             return;
         }
 
         // console.log("draw cell", this.name);
-        if ((this.position.x + this.position.y) % 2 === 0) {
+        if (this.position.x === midPosition.x && this.position.y === midPosition.y) {
+            this.ctx.fillStyle = 'black';
+        }else if ((this.position.x + this.position.y) % 2 === 0) {
             this.ctx.fillStyle = 'lightgray';
         } else {
             this.ctx.fillStyle = 'darkgray';
         }
 
         this.ctx.fillRect(this.position.x * this.size, this.position.y * this.size, this.size, this.size);
-        this.drawName();
+        this.drawName(midPosition);
     }
 
-    drawName() {
+    drawName(midPosition) {
         // console.log("draw name", this.name);
+        if (this.position.x === midPosition.x && this.position.y === midPosition.y){
+            this.ctx.fillStyle = 'white';
+        }else {
+            this.ctx.fillStyle = 'black';
+        }
         this.ctx.font = "18px Arial";
-        this.ctx.fillStyle = 'black';
         this.ctx.fillText(this.name, this.position.x * this.size+2, this.position.y * this.size+18);
     }
 
     clickOnCell(board) {
-        if (!this.centent) {return}
-        console.log("test function isSelected:", this.centent.isSelected());
-        if (!this.centent.isSelected()){
-            console.log("selecting cell:", this.name);
-            this.centent.select();
-            this.centent.setPossibleMovements(board, this.position);
-            this.centent.drawPossibleMovements(this.ctx, this.size);
+        if (!this.content) {return}
+        // console.log("test function isSelected:", this.content.isSelected());
+        if (!this.content.isSelected()){
+            // console.log("selecting cell:", this.name);
+            this.content.select();
+            this.content.setPossibleMovements(board, this.position);
+            this.content.drawPossibleMovements(this.ctx, this.size);
+
+            this.content.setPossibleAttacks(board, this.position);
+            this.content.drawPossibleAttacks(this.ctx, this.size);
         } else {
             
         }
     }
 
     cellContentIsSelected() {
-        if (!this.content) {return false}
+        if (this.content == null) {
+            // console.log("passssssssssssss")
+            return false}
         return this.content.isSelected();
     }
 }
