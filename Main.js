@@ -53,12 +53,26 @@ class Main {
 
         let cells = this.getAllCells();
         cells.forEach(cell => {
-            if (cell.name == "F8" || cell.name == "D6" || cell.name == "F4" || cell.name == "D4") {
-                cell.setNewContent(new Garde());
+            if ( cell.name == "D6" ) {
+                cell.setNewContent(new Garde("BLACK", this.createId()));
+            }else if (cell.name == "D8" || cell.name == "D4" || cell.name == "D10"){
+                cell.setNewContent(new Garde("WHITE", this.createId()));
+            }else if (cell.name == "F5" || cell.name == "H9"){
+                cell.setNewContent(new Archer("BLACK", this.createId()));
+            }else if (cell.name == "I3" || cell.name == "J7"){
+                cell.setNewContent(new Archer("WHITE", this.createId()));
             }
         });
         this.drawBoard();
 
+    }
+
+    createId(depth =3) {
+        let id = "";
+        for (let i = 0; i < depth; i++) {
+            id += Math.floor(Math.random() * 10);
+        }
+        return id;
     }
 
     clickOn(position) {
@@ -70,7 +84,6 @@ class Main {
                 // recupere les movement possible et verifie si le click corespond avec un movement possible
                 let possibleMove = cell.content.posibleMovementPositionsInBoard;
                 let canMove = possibleMove.find(pos => pos.x === position.x && pos.y === position.y);
-                // console.log("canMove:", canMove);
                 // verifier si le movement est possible 
                 if (canMove) {
                     // pacourir tt les cells pour trouver la cell cible
@@ -82,13 +95,31 @@ class Main {
                             // reset les donne de la place 
                             moveContent.resetData();
                             targetCell.setNewContent(moveContent);
-                            cell.content = null;
+                            cell.clearContent();
                         }
                     }
                     // redraw board
                     this.drawBoard();
                     break;
                 } else {
+                    // si on ne pas pas se depalce on verifi qu on ne peut pas attaquer
+                    let possibleAttack = cell.content.posibleAttackPositionsInBoard;
+                    let canAttack = possibleAttack.find(pos => pos.x === position.x && pos.y === position.y);
+                    // on verrifi que l on peut attacker 
+                    if (canAttack) {
+                        // pacourir tt les cells pour trouver la cell cible
+                        for (let targetCell of cells) {
+                            // verifier si la cell cible est la cell cible
+                            if (targetCell.position.x === position.x && targetCell.position.y === position.y) {
+                                // targetCell.yourAttacked(cell);
+                                cell.content.canAttack(targetCell, cell);
+                            }
+                        }
+                        // redraw board
+                        this.drawBoard();
+                        break;
+                    }
+
                     // si il peut pas bouger on deselctionne la piece
                     console.log("deselecting piece");
                     cell.content.select();

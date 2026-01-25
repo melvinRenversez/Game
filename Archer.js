@@ -1,20 +1,20 @@
-class Garde {
+class Archer {
 
     // 1 = garde position 
     // 2 = movimiento posible
 
-    constructor(team, id, background) {
+    constructor(team, id) {
         this.posibleMovement = [
-            [2, 2, 2,],
+            [0, 2, 0,],
             [2, 1, 2,],
-            [2, 2, 2,],
+            [0, 2, 0,],
         ];
         this.posibleAttack = [
-            [0, 0, 2, 0, 0],
-            [0, 0, 2, 0, 0],
-            [2, 2, 1, 2, 2],
-            [0, 0, 2, 0, 0],
-            [0, 0, 2, 0, 0]
+            [0, 2, 2, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
         ]
 
         this.posibleMovementPositionsInBoard = [];
@@ -25,38 +25,21 @@ class Garde {
         this.selected = false;
         this.color = 'blue';
         
-        this.typeAttack = "melee"; //  melee / range
+        this.typeAttack = "range"; //  melee / range
 
-        this.type = "garde";
-        this.background = background;
-
-        this.image = new Image();
-
-        this.image.src = this.team == "WHITE" ? "img/WG.png" : "img/BG.png";
-
+        this.type = "Archer";
     }
 
 
-    async draw(position, ctx, cellSize) {
-        
-        
-        if (!this.imageLoaded) {
-            await new Promise((resolve) => {
-                this.image.onload = () => {
-                    this.imageLoaded = true; // pour ne pas réattendre à chaque draw
-                    resolve();
-                };
-            });
-        }
-        
+    draw(position, ctx, cellSize) {
         ctx.fillStyle = this.color;
-        // ctx.fillRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
-        ctx.drawImage(this.image, position.x * cellSize, position.y * cellSize, cellSize, cellSize);
+
+        ctx.fillRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
 
         ctx.fillStyle = 'black';
-        // ctx.fillText(this.team, position.x * cellSize + 2, position.y * cellSize + 18);
-        // ctx.fillText(this.id, position.x * cellSize + 2, position.y * cellSize + 38);
-        // ctx.fillText(this.type, position.x * cellSize + 2, position.y * cellSize + 58);
+        ctx.fillText(this.team, position.x * cellSize + 2, position.y * cellSize + 18);
+        ctx.fillText(this.id, position.x * cellSize + 2, position.y * cellSize + 38);
+        ctx.fillText(this.type, position.x * cellSize + 2, position.y * cellSize + 58);
     }
 
     select() {
