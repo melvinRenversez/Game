@@ -17,11 +17,11 @@ class Cell {
 
         // console.log("draw cell", this.name);
         if (this.position.x === midPosition.x && this.position.y === midPosition.y) {
-            this.ctx.fillStyle = 'black';
+            this.ctx.fillStyle = '#413932';
         } else if ((this.position.x + this.position.y) % 2 === 0) {
-            this.ctx.fillStyle = 'lightgray';
+            this.ctx.fillStyle = '#6d543d';
         } else {
-            this.ctx.fillStyle = 'darkgray';
+            this.ctx.fillStyle = '#492f1a';
         }
 
         this.ctx.fillRect(this.position.x * this.size, this.position.y * this.size, this.size, this.size);
@@ -68,5 +68,12 @@ class Cell {
     }
     clearContent() {
         this.content = null
+    }
+
+    getContentTeam() {
+        if (this.content == null) {
+            return null
+        }
+        return this.content.getTeam();
     }
 }

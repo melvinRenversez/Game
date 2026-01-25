@@ -28,24 +28,48 @@ class Archer {
         this.typeAttack = "range"; //  melee / range
 
         this.type = "Archer";
+
+        this.image = new Image();
+
+        this.image.src = this.team == "WHITE" ? "img/WA.png" : "img/BA.png";
+
+        this.init()
     }
 
+    init() {
+        if (this.team == "BLACK") {
+            const rotate180 = m => m.slice().reverse().map(r => r.slice().reverse());
+            this.posibleMovement = rotate180(this.posibleMovement);
+            this.posibleAttack = rotate180(this.posibleAttack);
+        }
+    }
 
-    draw(position, ctx, cellSize) {
-        ctx.fillStyle = this.color;
+    async draw(position, ctx, cellSize) {
 
-        ctx.fillRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
 
-        ctx.fillStyle = 'black';
-        ctx.fillText(this.team, position.x * cellSize + 2, position.y * cellSize + 18);
-        ctx.fillText(this.id, position.x * cellSize + 2, position.y * cellSize + 38);
-        ctx.fillText(this.type, position.x * cellSize + 2, position.y * cellSize + 58);
+        if (!this.imageLoaded) {
+            await new Promise((resolve) => {
+                this.image.onload = () => {
+                    this.imageLoaded = true; // pour ne pas réattendre à chaque draw
+                    resolve();
+                };
+            });
+        }
+
+
+        // ctx.fillStyle = this.color;
+        // ctx.fillRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
+
+        ctx.drawImage(this.image, position.x * cellSize, position.y * cellSize, cellSize, cellSize);
+
+        // ctx.fillStyle = 'black';
+        // ctx.fillText(this.team, position.x * cellSize + 2, position.y * cellSize + 18);
+        // ctx.fillText(this.id, position.x * cellSize + 2, position.y * cellSize + 38);
+        // ctx.fillText(this.type, position.x * cellSize + 2, position.y * cellSize + 58);
     }
 
     select() {
-        console.log("selecting garde");
             this.selected = !this.selected;
-            console.log("Garde selected state:", this.selected);
     }
     isSelected() {
         return this.selected;
@@ -79,8 +103,6 @@ class Archer {
     }
 
     drawPossibleMovements(ctx, cellSize) {
-        console.log(this.posibleMovementPositionsInBoard);
-        console.log(this.selected);
         if (!this.selected) return;
         ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
         this.posibleMovementPositionsInBoard.forEach(pos => {
@@ -112,7 +134,6 @@ class Archer {
 
                     // verifier si la cellule actuel nes pas la mienne ou vide ou quelle ne sois aps de la meme team 
                     if (actualCell.content != this && actualCell.content != null && actualCell.content.getTeam() != this.team) {
-                        console.log("Enemy detected at: ", actualCell);
 
                         // verify is a possible movement
                         if (this.posibleAttack[row + offsetRow][col + offsetCol] === 2) {
@@ -123,7 +144,6 @@ class Archer {
                 }
             }
         }
-        console.log("possible attacks: ", this.posibleAttackPositionsInBoard);  
     }
 
 
@@ -136,7 +156,6 @@ class Archer {
     }
 
     resetData() {
-        console.log("resetting garde data");
         this.posibleMovementPositionsInBoard = [];
         this.selected = false;
     }

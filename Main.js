@@ -8,6 +8,11 @@ class Main {
         this.canvas.width = canvas.clientWidth;
         this.canvas.height = canvas.clientHeight;
 
+        this.Teams = {
+            WHITE: "WHITE",
+            BLACK: "BLACK"
+        }
+
         console.log(this.canvas.width, this.canvas.height);
 
         this.cellSize = this.canvas.width / this.boardSize.cols;
@@ -16,6 +21,8 @@ class Main {
 
         this.init();
         this.initEvents();
+
+        this.colorTurn = this.Teams.WHITE;
     }
 
     init() {
@@ -45,7 +52,7 @@ class Main {
         let cells = this.getAllCells();
         cells.forEach(cell => {
             // Draw cell background
-            cell.draw({ x: Math.floor(this.boardSize.cols / 2), y: Math.floor(this.boardSize.rows / 2)});
+            cell.draw({ x: Math.floor(this.boardSize.cols / 2), y: Math.floor(this.boardSize.rows / 2) });
         });
     }
 
@@ -53,21 +60,35 @@ class Main {
 
         let cells = this.getAllCells();
         cells.forEach(cell => {
-            if ( cell.name == "D6" ) {
-                cell.setNewContent(new Garde("BLACK", this.createId()));
-            }else if (cell.name == "D8" || cell.name == "D4" || cell.name == "D10"){
-                cell.setNewContent(new Garde("WHITE", this.createId()));
-            }else if (cell.name == "F5" || cell.name == "H9"){
-                cell.setNewContent(new Archer("BLACK", this.createId()));
-            }else if (cell.name == "I3" || cell.name == "J7"){
-                cell.setNewContent(new Archer("WHITE", this.createId()));
+
+
+            if (cell.position.y == 0) {
+                cell.setNewContent(new Garde(this.Teams.BLACK, this.createId()));
+
+            } else if (cell.position.y == 1) {
+                cell.setNewContent(new Archer(this.Teams.BLACK, this.createId()));
+            } else if (cell.position.y == 9) {
+                cell.setNewContent(new Archer(this.Teams.WHITE, this.createId()));
+            } else if (cell.position.y == 10) {
+                cell.setNewContent(new Garde(this.Teams.WHITE, this.createId()));
             }
+
+
+            // if ( cell.name == "D6" ) {
+            //     cell.setNewContent(new Garde("this.Teams.BLACK", this.createId()));
+            // }else if (cell.name == "D8" || cell.name == "D4" || cell.name == "D10"){
+            //     cell.setNewContent(new Garde("this.Teams.WHITE", this.createId()));
+            // }else if (cell.name == "F5" || cell.name == "H9"){
+            //     cell.setNewContent(new Archer("this.Teams.BLACK", this.createId()));
+            // }else if (cell.name == "I3" || cell.name == "J7"){
+            //     cell.setNewContent(new Archer("this.Teams.WHITE", this.createId()));
+            // }
         });
         this.drawBoard();
 
     }
 
-    createId(depth =3) {
+    createId(depth = 3) {
         let id = "";
         for (let i = 0; i < depth; i++) {
             id += Math.floor(Math.random() * 10);
@@ -96,6 +117,7 @@ class Main {
                             moveContent.resetData();
                             targetCell.setNewContent(moveContent);
                             cell.clearContent();
+                            this.colorTurn = this.colorTurn == this.Teams.WHITE ? this.Teams.BLACK : this.Teams.WHITE;
                         }
                     }
                     // redraw board
@@ -113,21 +135,20 @@ class Main {
                             if (targetCell.position.x === position.x && targetCell.position.y === position.y) {
                                 // targetCell.yourAttacked(cell);
                                 cell.content.canAttack(targetCell, cell);
+                                this.colorTurn = this.colorTurn == this.Teams.WHITE ? this.Teams.BLACK : this.Teams.WHITE;
                             }
                         }
                         // redraw board
                         this.drawBoard();
                         break;
                     }
-
                     // si il peut pas bouger on deselctionne la piece
-                    console.log("deselecting piece");
                     cell.content.select();
                     this.drawBoard();
                 }
             } else {
                 cells.forEach(cell => {
-                    if (cell.position.x === position.x && cell.position.y === position.y) {
+                    if (cell.position.x === position.x && cell.position.y === position.y && cell.getContentTeam() == this.colorTurn) {
                         cell.clickOnCell(this.board);
                     }
                 });

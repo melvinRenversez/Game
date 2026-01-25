@@ -3,7 +3,7 @@ class Garde {
     // 1 = garde position 
     // 2 = movimiento posible
 
-    constructor(team, id, background) {
+    constructor(team, id) {
         this.posibleMovement = [
             [2, 2, 2,],
             [2, 1, 2,],
@@ -28,7 +28,6 @@ class Garde {
         this.typeAttack = "melee"; //  melee / range
 
         this.type = "garde";
-        this.background = background;
 
         this.image = new Image();
 
@@ -49,20 +48,19 @@ class Garde {
             });
         }
         
-        ctx.fillStyle = this.color;
+        // ctx.fillStyle = this.color;
         // ctx.fillRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
+        
         ctx.drawImage(this.image, position.x * cellSize, position.y * cellSize, cellSize, cellSize);
 
-        ctx.fillStyle = 'black';
+        // ctx.fillStyle = 'black';
         // ctx.fillText(this.team, position.x * cellSize + 2, position.y * cellSize + 18);
         // ctx.fillText(this.id, position.x * cellSize + 2, position.y * cellSize + 38);
         // ctx.fillText(this.type, position.x * cellSize + 2, position.y * cellSize + 58);
     }
 
     select() {
-        console.log("selecting garde");
             this.selected = !this.selected;
-            console.log("Garde selected state:", this.selected);
     }
     isSelected() {
         return this.selected;
@@ -96,8 +94,6 @@ class Garde {
     }
 
     drawPossibleMovements(ctx, cellSize) {
-        console.log(this.posibleMovementPositionsInBoard);
-        console.log(this.selected);
         if (!this.selected) return;
         ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
         this.posibleMovementPositionsInBoard.forEach(pos => {
@@ -129,7 +125,6 @@ class Garde {
 
                     // verifier si la cellule actuel nes pas la mienne ou vide ou quelle ne sois aps de la meme team 
                     if (actualCell.content != this && actualCell.content != null && actualCell.content.getTeam() != this.team) {
-                        console.log("Enemy detected at: ", actualCell);
 
                         // verify is a possible movement
                         if (this.posibleAttack[row + offsetRow][col + offsetCol] === 2) {
@@ -140,7 +135,6 @@ class Garde {
                 }
             }
         }
-        console.log("possible attacks: ", this.posibleAttackPositionsInBoard);  
     }
 
 
@@ -153,7 +147,6 @@ class Garde {
     }
 
     resetData() {
-        console.log("resetting garde data");
         this.posibleMovementPositionsInBoard = [];
         this.selected = false;
     }
